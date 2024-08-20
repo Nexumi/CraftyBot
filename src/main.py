@@ -191,7 +191,7 @@ async def backup(
       await ctx.respond(
         embed=discord.Embed(
           color=config.EMBED_COLOR,
-          description=utils.toggleTask(server_id, 1, enable)
+          description=utils.toggleTask(server_id, enable)
         )
       )
 

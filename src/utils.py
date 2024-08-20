@@ -64,14 +64,16 @@ def toggleTask(server_id: str, enabled: bool):
 
   task_id = config.SERVER_TO_TASK.get(server_id)
   if task_id is None:
-    return
+    return 'Task not found'
 
   for tid in task_id:
-    response = requests.patch(
+    response = session.patch(
       f'{config.BASE_URL}/servers/{server_id}/tasks/{tid}',
-      headers=headers,
+      headers=getHeaders(),
       json=body
     )
+
+  return f'Server tasks successfully {"enabled" if enabled else "disabled"}'
 
 
 # Validation Functions
@@ -81,7 +83,7 @@ async def isAdminUser(ctx):
   if not valid:
     await ctx.respond(
       embed=discord.Embed(
-        color=8864735,
+        color=config.EMBED_COLOR,
         description='UNAUTHORIZED USER'
       ),
       ephemeral=True
@@ -95,7 +97,7 @@ async def isValidUser(ctx):
   if not valid:
     await ctx.respond(
       embed=discord.Embed(
-        color=8864735,
+        color=config.EMBED_COLOR,
         description=f'UNAUTHORIZED USER\nREQUIRED ROLE: {", ".join(config.AUTHORIZED_ROLES)}'
       ),
       ephemeral=True
@@ -108,7 +110,7 @@ async def isValidServerId(ctx, position: int, limit: int):
   if not valid:
     await ctx.respond(
       embed=discord.Embed(
-        color=8864735,
+        color=config.EMBED_COLOR,
         description='INVALID SERVER_ID\nPlease use /list to see server ids'
       ),
       ephemeral=True
@@ -131,7 +133,7 @@ def getToken():
 
   response = session.post(
     f'{config.BASE_URL}/auth/login',
-    headers=headers,
+    headers=getHeaders(),
     json=json_data
   )
 
