@@ -195,4 +195,33 @@ async def backup(
       )
 
 
+@bot.slash_command(description='(Admin Only) Start server player watcher.', guild_ids=config.ADMIN_GUILDS)
+async def watcher(ctx):
+  if await utils.isAdminUser(ctx):
+    servers = utils.getServerList()
+
+    for server in servers:
+      status = utils.getServerStatus(server['server_id'])
+      running = status['running']
+
+      if running:
+        models.PlayerWatcher(None, server["server_name"], server['server_id'])
+        await ctx.respond(
+          embed=discord.Embed(
+            color=config.EMBED_COLOR,
+            description=f'PlayerWatcher started watching {server["server_name"]}'
+          )
+        )
+
+        break
+    else:
+      await ctx.respond(
+        embed=discord.Embed(
+          color=config.EMBED_COLOR,
+          description='All servers are stopped'
+        ),
+        ephemeral=True
+      )
+
+
 bot.run(config.TOKEN)
