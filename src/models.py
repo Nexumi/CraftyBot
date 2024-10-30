@@ -100,7 +100,7 @@ class PlayerWatcher(commands.Cog):
           self.minutes = 0
       else:
         if utils.sendServerAction(self.server_id, 'stop'):
-          if self.server_name in ['ATM9', 'Prominence II RPG']:
+          if self.server_id in config.SERVER_TO_TASK:
             utils.toggleTask(self.server_id, False)
 
         if self.channel is not None:
