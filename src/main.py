@@ -14,7 +14,6 @@ async def list(ctx):
     servers = utils.getServerList()
 
     response = ['Available Servers:']
-    digits = len(str(len(servers)))
     for i in range(len(servers)):
       status = utils.getServerStatus(servers[i]['server_id'])
       running = status['running']
@@ -191,7 +190,7 @@ async def backup(
       await ctx.respond(
         embed=discord.Embed(
           color=config.EMBED_COLOR,
-          description=utils.toggleTask(server_id, enable)
+          description=f'Server tasks successfully {"enabled" if utils.toggleTask(server_id, enable) else "disabled"}'
         )
       )
 

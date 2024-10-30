@@ -73,7 +73,7 @@ def toggleTask(server_id: str, enabled: bool):
       json=body
     )
 
-  return f'Server tasks successfully {"enabled" if enabled else "disabled"}'
+  return enabled
 
 
 # Validation Functions
