@@ -75,7 +75,7 @@ class PlayerWatcher(commands.Cog):
     server_name: str,
     server_id: str
   ):
-    self.channel = message.channel
+    self.channel = message.channel if message is not None else None
     self.server_name = server_name
     self.server_id = server_id
     
@@ -103,12 +103,14 @@ class PlayerWatcher(commands.Cog):
           if self.server_name in ['ATM9', 'Prominence II RPG']:
             utils.toggleTask(self.server_id, False)
 
-        await self.channel.send(
-          embed=discord.Embed(
-            color=8864735,
-            description=f'{self.server_name} has been stopped due to inactivity'
+        if self.channel is not None:
+          await self.channel.send(
+            embed=discord.Embed(
+              color=8864735,
+              description=f'{self.server_name} has been stopped due to inactivity'
+            )
           )
-        )
+
         self.check.cancel()
     else:
       self.check.cancel()
