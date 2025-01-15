@@ -69,12 +69,16 @@ class StatusWatcher(commands.Cog):
 
 
 class PlayerWatcher(commands.Cog):
+  watcher = set()
+
+
   def __init__(
     self,
     message,
     server_name: str,
     server_id: str
   ):
+    PlayerWatcher.watcher.add(server_id)
     self.channel = message.channel if message is not None else None
     self.server_name = server_name
     self.server_id = server_id
@@ -88,9 +92,6 @@ class PlayerWatcher(commands.Cog):
 
   @tasks.loop(minutes=1)
   async def check(self):
-    if self.timeout <= 0:
-      self.check.cancel()
-
     server_status = utils.getServerStatus(self.server_id)
     if server_status['running']:
       if self.minutes < self.timeout:
@@ -111,6 +112,8 @@ class PlayerWatcher(commands.Cog):
             )
           )
 
+        PlayerWatcher.watcher.remove(self.server_id)
         self.check.cancel()
     else:
+      PlayerWatcher.watcher.remove(self.server_id)
       self.check.cancel()
