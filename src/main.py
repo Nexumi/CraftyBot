@@ -198,6 +198,15 @@ async def backup(
 @bot.slash_command(description='(Admin Only) Start server player watcher.', guild_ids=config.ADMIN_GUILDS)
 async def watcher(ctx):
   if await utils.isAdminUser(ctx):
+    if config.IDLE_TIMEOUT <= 0:
+      await ctx.respond(
+        embed=discord.Embed(
+          color=config.EMBED_COLOR,
+          description=f'PlayerWatcher failed to start due to invalid IDLE_TIMEOUT config'
+        ),
+        ephemeral=True
+      )
+
     servers = utils.getServerList()
 
     for server in servers:
@@ -205,13 +214,22 @@ async def watcher(ctx):
       running = status['running']
 
       if running:
-        models.PlayerWatcher(None, server["server_name"], server['server_id'])
-        await ctx.respond(
-          embed=discord.Embed(
-            color=config.EMBED_COLOR,
-            description=f'PlayerWatcher started watching {server["server_name"]}'
+        if server['server_id'] in models.PlayerWatcher.watcher:
+          await ctx.respond(
+            embed=discord.Embed(
+              color=config.EMBED_COLOR,
+              description=f'PlayerWatcher is already watching {server["server_name"]}'
+            ),
+            ephemeral=True
           )
-        )
+        else:
+          message = await ctx.respond(
+            embed=discord.Embed(
+              color=config.EMBED_COLOR,
+              description=f'PlayerWatcher started watching {server["server_name"]}'
+            )
+          )
+          models.PlayerWatcher(message, server["server_name"], server['server_id'])
 
         break
     else:
