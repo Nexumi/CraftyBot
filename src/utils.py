@@ -6,6 +6,7 @@ import re
 
 session = requests.Session()
 session.verify = config.VERIFY_SSL
+requests.packages.urllib3.disable_warnings()
 
 
 # Format Functions
