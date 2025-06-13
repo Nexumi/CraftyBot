@@ -27,12 +27,22 @@ async def list(ctx: discord.ApplicationContext):
 @discord.guild_only()
 async def start(
   ctx: discord.ApplicationContext,
-  server_number: discord.commands.Option(int, 'Get server number from /list')
+  server: discord.commands.Option(
+    str,
+    'Name of server to start/restart.',
+    autocomplete=discord.utils.basic_autocomplete(utils.get_server_names)
+  )
 ):
   utils.log_request(ctx, locals())
   if await utils.is_valid_user(ctx):
     servers = utils.get_server_list()
-    server_pos = server_number - 1
+    try:
+      server_pos = utils.get_server_names(server_list=servers).index(server)
+    except:
+      if server.isdigit():
+        server_pos = int(server) - 1
+      else:
+        server_pos = -1
     if await utils.is_valid_server_id(ctx, server_pos, len(servers)):
       server_id = servers[server_pos]['server_id']
       server_name = servers[server_pos]['server_name']

@@ -77,6 +77,12 @@ def get_server_list():
   return response.json()['data']
 
 
+def get_server_names(ctx=None, server_list=None):
+  if server_list is None:
+    server_list = get_server_list()
+  return list(map(lambda s: s["server_name"], server_list))
+
+
 def get_server_status(server_id: str):
   has_valid_token()
 
