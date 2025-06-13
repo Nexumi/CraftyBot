@@ -22,7 +22,7 @@ class StatusWatcher(commands.Cog):
     self.status = status
     self.extra_p = 'p' if status == 'stop' else ''
 
-    self.running = utils.getServerStatus(server_id)['version']
+    self.running = utils.get_server_status(server_id)['version']
     self.timeout = 180
     self.seconds = 0
     self.delay = 10 if status == 'restart' else 0
@@ -70,7 +70,7 @@ class StatusWatcher(commands.Cog):
       or self.status == "stop" and self.running != 'False')\
       and self.seconds < self.timeout):
         self.seconds += 1
-        self.running = utils.getServerStatus(self.server_id)['version']
+        self.running = utils.get_server_status(self.server_id)['version']
         await self.dotX3()
     else:
       await self.stop()
@@ -103,7 +103,7 @@ class PlayerWatcher(commands.Cog):
 
   @tasks.loop(minutes=1)
   async def check(self):
-    server_status = utils.getServerStatus(self.server_id)
+    server_status = utils.get_server_status(self.server_id)
     if server_status['running']:
       if self.minutes < self.timeout:
         if server_status['online'] == 0:
@@ -111,9 +111,9 @@ class PlayerWatcher(commands.Cog):
         else:
           self.minutes = 0
       else:
-        if utils.sendServerAction(self.server_id, 'stop'):
+        if utils.send_server_action(self.server_id, 'stop'):
           if self.server_id in config.SERVER_TO_TASK:
-            utils.toggleTask(self.server_id, False)
+            utils.toggle_task(self.server_id, False)
 
         if self.channel is not None:
           now = datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")

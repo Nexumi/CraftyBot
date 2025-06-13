@@ -13,7 +13,7 @@ requests.packages.urllib3.disable_warnings()
 
 # Format Functions
 
-def cleanDescription(text: str):
+def clean_description(text: str):
   return re.sub(r'§.', '', text).strip().replace('\n', '')
 
 
@@ -60,47 +60,47 @@ async def log_response(ctx, bot, description, ephemeral=False):
 
 # Server Functions
 
-def getHeaders():
+def get_headers():
   return {
     'Authorization': f'Bearer {TOKEN}'
   }
 
 
-def getServerList():
-  hasValidToken()
+def get_server_list():
+  has_valid_token()
 
   response = session.get(
     f'{config.BASE_URL}/servers',
-    headers=getHeaders()
+    headers=get_headers()
   )
 
   return response.json()['data']
 
 
-def getServerStatus(server_id: str):
-  hasValidToken()
+def get_server_status(server_id: str):
+  has_valid_token()
 
   response = session.get(
     f'{config.BASE_URL}/servers/{server_id}/stats',
-    headers=getHeaders()
+    headers=get_headers()
   )
 
   return response.json()['data']
 
 
-def sendServerAction(server_id: str, action: str):
-  hasValidToken()
+def send_server_action(server_id: str, action: str):
+  has_valid_token()
 
   response = session.post(
     f'{config.BASE_URL}/servers/{server_id}/action/{action}_server',
-    headers=getHeaders()
+    headers=get_headers()
   )
 
   return response.json()['status'] == 'ok'
 
 
-def toggleTask(server_id: str, enabled: bool):
-  hasValidToken()
+def toggle_task(server_id: str, enabled: bool):
+  has_valid_token()
 
   body = {
     'enabled': enabled
@@ -113,7 +113,7 @@ def toggleTask(server_id: str, enabled: bool):
   for tid in task_id:
     response = session.patch(
       f'{config.BASE_URL}/servers/{server_id}/tasks/{tid}',
-      headers=getHeaders(),
+      headers=get_headers(),
       json=body
     )
 
@@ -122,7 +122,7 @@ def toggleTask(server_id: str, enabled: bool):
 
 # Validation Functions
 
-async def isAdminUser(ctx: discord.ApplicationContext):
+async def is_admin_user(ctx: discord.ApplicationContext):
   valid = ctx.author.id in config.ADMINS
   if not valid:
     await ctx.respond(
@@ -135,7 +135,7 @@ async def isAdminUser(ctx: discord.ApplicationContext):
   return valid
 
 
-async def isValidUser(ctx: discord.ApplicationContext):
+async def is_valid_user(ctx: discord.ApplicationContext):
   valid = ctx.author.id in config.ADMINS or \
     any(role.name in config.AUTHORIZED_ROLES for role in ctx.author.roles)
   if not valid:
@@ -149,7 +149,7 @@ async def isValidUser(ctx: discord.ApplicationContext):
   return valid
 
 
-async def isValidServerId(ctx: discord.ApplicationContext, position: int, limit: int):
+async def is_valid_server_id(ctx: discord.ApplicationContext, position: int, limit: int):
   valid = 0 <= position < limit
   if not valid:
     await ctx.respond(
@@ -164,7 +164,7 @@ async def isValidServerId(ctx: discord.ApplicationContext, position: int, limit:
 
 # Token Functions
 
-def getToken():
+def get_token():
   headers = {
     'content-type': 'application/json',
     'accept': 'application/json, */*;q=0.5'
@@ -177,39 +177,39 @@ def getToken():
 
   response = session.post(
     f'{config.BASE_URL}/auth/login',
-    headers=getHeaders(),
+    headers=get_headers(),
     json=json_data
   )
 
   return response.json()['data']['token']
 
 
-def clearAllTokens():
-  hasValidToken()
+def clear_all_tokens():
+  has_valid_token()
 
   response = session.post(
     f'{config.BASE_URL}/auth/invalidate_tokens',
-    headers=getHeaders()
+    headers=get_headers()
   )
 
   return response.json()['status'] == 'ok'
 
 
-def hasValidToken():
+def has_valid_token():
   global TOKEN
 
   response = session.get(
       f'{config.BASE_URL}/servers',
-      headers=getHeaders()
+      headers=get_headers()
   )
 
   json = response.json()
   if json['status'] == 'error' and json['error'] == 'ACCESS_DENIED':
-    TOKEN = getToken()
+    TOKEN = get_token()
     return 'New Token Generated'
 
   return 'Token Valid'
 
 
 TOKEN = None
-clearAllTokens()
+clear_all_tokens()

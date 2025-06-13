@@ -11,12 +11,12 @@ bot = discord.Bot(activity=discord.Game('Minecraft Server God'))
 @discord.guild_only()
 async def list(ctx: discord.ApplicationContext):
   utils.log_request(ctx, locals())
-  if await utils.isValidUser(ctx):
-    servers = utils.getServerList()
+  if await utils.is_valid_user(ctx):
+    servers = utils.get_server_list()
 
     response = ['Available Servers:']
     for i in range(len(servers)):
-      status = utils.getServerStatus(servers[i]['server_id'])
+      status = utils.get_server_status(servers[i]['server_id'])
       running = status['running']
       response.append(f'{i + 1}. [{"Running" if running else "Stopped"}] {servers[i]["server_name"]}')
 
@@ -30,15 +30,15 @@ async def start(
   server_number: discord.commands.Option(int, 'Get server number from /list')
 ):
   utils.log_request(ctx, locals())
-  if await utils.isValidUser(ctx):
-    servers = utils.getServerList()
+  if await utils.is_valid_user(ctx):
+    servers = utils.get_server_list()
     server_pos = server_number - 1
-    if await utils.isValidServerId(ctx, server_pos, len(servers)):
+    if await utils.is_valid_server_id(ctx, server_pos, len(servers)):
       server_id = servers[server_pos]['server_id']
       server_name = servers[server_pos]['server_name']
 
       for server in servers:
-        if utils.getServerStatus(server['server_id'])['running'] and server_name != server['server_name']:
+        if utils.get_server_status(server['server_id'])['running'] and server_name != server['server_name']:
           await utils.log_response(
             ctx,
             bot,
@@ -47,10 +47,10 @@ async def start(
           )
           return
 
-      running = utils.getServerStatus(server_id)['running']
-      if utils.sendServerAction(server_id, 'restart'):
+      running = utils.get_server_status(server_id)['running']
+      if utils.send_server_action(server_id, 'restart'):
         if server_id in config.SERVER_TO_TASK and not running:
-          utils.toggleTask(server_id, True)
+          utils.toggle_task(server_id, True)
         status = f'{server_name} is starting'
       else:
         status = f'Something went wrong while trying to start {server_name}'
@@ -74,16 +74,16 @@ async def start(
 @discord.guild_only()
 async def stop(ctx: discord.ApplicationContext):
   utils.log_request(ctx, locals())
-  if await utils.isValidUser(ctx):
-    servers = utils.getServerList()
+  if await utils.is_valid_user(ctx):
+    servers = utils.get_server_list()
     for server in servers:
       server_id = server['server_id']
       server_name = server['server_name']
 
-      if utils.getServerStatus(server_id)['running']:
-        if utils.sendServerAction(server_id, 'stop'):
+      if utils.get_server_status(server_id)['running']:
+        if utils.send_server_action(server_id, 'stop'):
           if server_id in config.SERVER_TO_TASK:
-            utils.toggleTask(server_id, False)
+            utils.toggle_task(server_id, False)
           status = f'{server_name} is stopping'
         else:
           status = f'Something went wrong while trying to stop {server_name}'
@@ -111,17 +111,17 @@ async def detail(
   server_number: discord.commands.Option(int, 'Get server number from /list')
 ):
   utils.log_request(ctx, locals())
-  if await utils.isValidUser(ctx):
-    servers = utils.getServerList()
+  if await utils.is_valid_user(ctx):
+    servers = utils.get_server_list()
     server_pos = server_number - 1
-    if await utils.isValidServerId(ctx, server_pos, len(servers)):
+    if await utils.is_valid_server_id(ctx, server_pos, len(servers)):
       server = servers[server_pos]
       server_id = server['server_id']
-      status = utils.getServerStatus(server_id)
+      status = utils.get_server_status(server_id)
 
       name = status['world_name']
       running = status['running']
-      desc = utils.cleanDescription(status['desc']) if status['desc'] != 'False' else 'Loading...'
+      desc = utils.clean_description(status['desc']) if status['desc'] != 'False' else 'Loading...'
       version = status['version'] if status['version'] != 'False' else 'Loading...'
       ip = 'crafty.jpkit.us'
       port = status['server_id']['server_port']
@@ -144,18 +144,18 @@ async def detail(
 @bot.slash_command(description='(Admin Only) Generate auth token.', guild_ids=config.ADMIN_GUILDS)
 async def auth(ctx: discord.ApplicationContext):
   utils.log_request(ctx, locals())
-  if await utils.isAdminUser(ctx):
-    await utils.log_response(ctx, bot, utils.hasValidToken())
+  if await utils.is_admin_user(ctx):
+    await utils.log_response(ctx, bot, utils.has_valid_token())
 
 
 @bot.slash_command(description='(Admin Only) Deauth all tokens.', guild_ids=config.ADMIN_GUILDS)
 async def deauth(ctx: discord.ApplicationContext):
   utils.log_request(ctx, locals())
-  if await utils.isAdminUser(ctx):
+  if await utils.is_admin_user(ctx):
     await utils.log_response(
       ctx,
       bot,
-      'All tokens have been deauthed' if utils.clearAllTokens() else 'Failed to deauth tokens'
+      'All tokens have been deauthed' if utils.clear_all_tokens() else 'Failed to deauth tokens'
     )
 
 
@@ -166,22 +166,22 @@ async def backup(
   enable: discord.commands.Option(bool, 'Enable/Disable backup scheduler')
 ):
   utils.log_request(ctx, locals())
-  if await utils.isAdminUser(ctx):
-    servers = utils.getServerList()
+  if await utils.is_admin_user(ctx):
+    servers = utils.get_server_list()
     server_pos = server_number - 1
-    if await utils.isValidServerId(ctx, server_pos, len(servers)):
+    if await utils.is_valid_server_id(ctx, server_pos, len(servers)):
       server_id = servers[server_pos]['server_id']
       await utils.log_response(
         ctx,
         bot,
-        f'Server tasks successfully {"enabled" if utils.toggleTask(server_id, enable) else "disabled"}'
+        f'Server tasks successfully {"enabled" if utils.toggle_task(server_id, enable) else "disabled"}'
       )
 
 
 @bot.slash_command(description='(Admin Only) Start server player watcher.', guild_ids=config.ADMIN_GUILDS)
 async def watcher(ctx: discord.ApplicationContext):
   utils.log_request(ctx, locals())
-  if await utils.isAdminUser(ctx):
+  if await utils.is_admin_user(ctx):
     if config.IDLE_TIMEOUT <= 0:
       await utils.log_response(
         ctx,
@@ -190,10 +190,10 @@ async def watcher(ctx: discord.ApplicationContext):
         ephemeral=True
       )
 
-    servers = utils.getServerList()
+    servers = utils.get_server_list()
 
     for server in servers:
-      status = utils.getServerStatus(server['server_id'])
+      status = utils.get_server_status(server['server_id'])
       running = status['running']
 
       if running:
