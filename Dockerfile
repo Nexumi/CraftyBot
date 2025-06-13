@@ -5,4 +5,4 @@ RUN pip install -U py-cord requests
 WORKDIR /home/user/app
 COPY ./src ./
 
-CMD [ "python", "main.py" ]
+CMD [ "python", "-u", "main.py" ]

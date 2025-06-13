@@ -1,7 +1,5 @@
 services:
   app:
+    build: .
     container_name: crafty-bot
-    build:
-      context: .
-      dockerfile: Dockerfile
     restart: unless-stopped
