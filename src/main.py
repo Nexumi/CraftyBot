@@ -30,7 +30,7 @@ async def start(
   server: discord.commands.Option(
     str,
     'Name of server to start/restart.',
-    autocomplete=discord.utils.basic_autocomplete(utils.get_server_names)
+    autocomplete=utils.get_server_names
   )
 ):
   utils.log_request(ctx, locals())
