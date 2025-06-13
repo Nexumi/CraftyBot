@@ -80,6 +80,7 @@ def get_server_list():
 def get_server_names(server_list=None, ctx=None):
   if server_list is None:
     server_list = get_server_list()
+  results = map(lambda s: s['server_name'], server_list)
   if ctx is not None:
     if ctx.value.isdigit():
       value = int(ctx.value)
@@ -89,8 +90,9 @@ def get_server_names(server_list=None, ctx=None):
         return [server_list[value - 1]["server_name"]]
       except:
         return []
-  search = ctx.value.casefold()
-  return list(filter(lambda n: search in n.casefold(), map(lambda s: s["server_name"], server_list)))
+    search = ctx.value.casefold()
+    results = filter(lambda n: search in n.casefold(), results)
+  return list(results)
 
 
 def get_server_status(server_id: str):

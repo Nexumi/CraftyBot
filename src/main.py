@@ -38,7 +38,8 @@ async def start(
     servers = utils.get_server_list()
     try:
       server_pos = utils.get_server_names(server_list=servers).index(server)
-    except:
+    except Exception as e:
+      print(e)
       if server.isdigit():
         server_pos = int(server) - 1
       else:
