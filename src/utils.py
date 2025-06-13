@@ -138,41 +138,31 @@ def toggle_task(server_id: str, enabled: bool):
 
 # Validation Functions
 
-async def is_admin_user(ctx: discord.ApplicationContext):
+async def is_admin_user(ctx: discord.ApplicationContext, bot):
   valid = ctx.author.id in config.ADMINS
   if not valid:
-    await ctx.respond(
-      embed=discord.Embed(
-        color=config.EMBED_COLOR,
-        description='UNAUTHORIZED USER'
-      ),
-      ephemeral=True
-    )
+    await log_response(ctx, bot, 'UNAUTHORIZED USER', ephemeral=True)
   return valid
 
 
-async def is_valid_user(ctx: discord.ApplicationContext):
+async def is_valid_user(ctx: discord.ApplicationContext, bot):
   valid = ctx.author.id in config.ADMINS or \
     any(role.name in config.AUTHORIZED_ROLES for role in ctx.author.roles)
   if not valid:
-    await ctx.respond(
-      embed=discord.Embed(
-        color=config.EMBED_COLOR,
-        description=f'UNAUTHORIZED USER\nREQUIRED ROLE: {", ".join(config.AUTHORIZED_ROLES)}'
-      ),
+    await log_response(ctx,
+      bot,
+      f'UNAUTHORIZED USER\nREQUIRED ROLE: {", ".join(config.AUTHORIZED_ROLES)}',
       ephemeral=True
     )
   return valid
 
 
-async def is_valid_server_id(ctx: discord.ApplicationContext, position: int, limit: int):
+async def is_valid_server_id(ctx: discord.ApplicationContext, bot, position: int, limit: int):
   valid = 0 <= position < limit
   if not valid:
-    await ctx.respond(
-      embed=discord.Embed(
-        color=config.EMBED_COLOR,
-        description='INVALID SERVER_ID\nPlease use /list to see server ids'
-      ),
+    await log_response(ctx,
+      bot,
+      'INVALID SERVER_ID\nPlease use /list to see server ids',
       ephemeral=True
     )
   return valid

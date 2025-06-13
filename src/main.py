@@ -11,7 +11,7 @@ bot = discord.Bot(activity=discord.Game('Minecraft Server God'))
 @discord.guild_only()
 async def list(ctx: discord.ApplicationContext):
   utils.log_request(ctx, locals())
-  if await utils.is_valid_user(ctx):
+  if await utils.is_valid_user(ctx, bot):
     servers = utils.get_server_list()
 
     response = ['Available Servers:']
@@ -34,7 +34,7 @@ async def start(
   )
 ):
   utils.log_request(ctx, locals())
-  if await utils.is_valid_user(ctx):
+  if await utils.is_valid_user(ctx, bot):
     servers = utils.get_server_list()
     try:
       server_pos = utils.get_server_names(server_list=servers).index(server)
@@ -43,7 +43,7 @@ async def start(
         server_pos = int(server) - 1
       else:
         server_pos = -1
-    if await utils.is_valid_server_id(ctx, server_pos, len(servers)):
+    if await utils.is_valid_server_id(ctx, bot, server_pos, len(servers)):
       server_id = servers[server_pos]['server_id']
       server_name = servers[server_pos]['server_name']
 
@@ -84,7 +84,7 @@ async def start(
 @discord.guild_only()
 async def stop(ctx: discord.ApplicationContext):
   utils.log_request(ctx, locals())
-  if await utils.is_valid_user(ctx):
+  if await utils.is_valid_user(ctx, bot):
     servers = utils.get_server_list()
     for server in servers:
       server_id = server['server_id']
@@ -121,10 +121,10 @@ async def detail(
   server_number: discord.commands.Option(int, 'Get server number from /list')
 ):
   utils.log_request(ctx, locals())
-  if await utils.is_valid_user(ctx):
+  if await utils.is_valid_user(ctx, bot):
     servers = utils.get_server_list()
     server_pos = server_number - 1
-    if await utils.is_valid_server_id(ctx, server_pos, len(servers)):
+    if await utils.is_valid_server_id(ctx, bot, server_pos, len(servers)):
       server = servers[server_pos]
       server_id = server['server_id']
       status = utils.get_server_status(server_id)
@@ -154,14 +154,14 @@ async def detail(
 @bot.slash_command(description='(Admin Only) Generate auth token.', guild_ids=config.ADMIN_GUILDS)
 async def auth(ctx: discord.ApplicationContext):
   utils.log_request(ctx, locals())
-  if await utils.is_admin_user(ctx):
+  if await utils.is_admin_user(ctx, bot):
     await utils.log_response(ctx, bot, utils.has_valid_token())
 
 
 @bot.slash_command(description='(Admin Only) Deauth all tokens.', guild_ids=config.ADMIN_GUILDS)
 async def deauth(ctx: discord.ApplicationContext):
   utils.log_request(ctx, locals())
-  if await utils.is_admin_user(ctx):
+  if await utils.is_admin_user(ctx, bot):
     await utils.log_response(
       ctx,
       bot,
@@ -176,10 +176,10 @@ async def backup(
   enable: discord.commands.Option(bool, 'Enable/Disable backup scheduler')
 ):
   utils.log_request(ctx, locals())
-  if await utils.is_admin_user(ctx):
+  if await utils.is_admin_user(ctx, bot):
     servers = utils.get_server_list()
     server_pos = server_number - 1
-    if await utils.is_valid_server_id(ctx, server_pos, len(servers)):
+    if await utils.is_valid_server_id(ctx, bot, server_pos, len(servers)):
       server_id = servers[server_pos]['server_id']
       await utils.log_response(
         ctx,
@@ -191,7 +191,7 @@ async def backup(
 @bot.slash_command(description='(Admin Only) Start server player watcher.', guild_ids=config.ADMIN_GUILDS)
 async def watcher(ctx: discord.ApplicationContext):
   utils.log_request(ctx, locals())
-  if await utils.is_admin_user(ctx):
+  if await utils.is_admin_user(ctx, bot):
     if config.IDLE_TIMEOUT <= 0:
       await utils.log_response(
         ctx,
