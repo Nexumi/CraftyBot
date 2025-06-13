@@ -1,5 +1,7 @@
 import config
+import datetime
 import discord
+import inspect
 import requests
 import re
 
@@ -13,6 +15,47 @@ requests.packages.urllib3.disable_warnings()
 
 def cleanDescription(text: str):
   return re.sub(r'§.', '', text).strip().replace('\n', '')
+
+
+# Logging Functions
+
+def log_request(ctx, parameters: dict):
+  now = datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")
+  guild_name = ctx.interaction.guild.name
+  channel_name = ctx.interaction.channel.name
+  user_name = ctx.interaction.user.name
+
+  command_name = inspect.stack()[1].function
+  command_parameters = " ".join(list(map(lambda l: f"{l[0]}={l[1]}", dict(list(parameters.items())[1:]).items())))
+  command = f"/{command_name} {command_parameters}"
+
+  print(f"[-] Executing Command @ {now}")
+  print(f"[{guild_name} - #{channel_name}] ({user_name}) {command}")
+
+
+async def log_response(ctx, bot, description, ephemeral=False):
+  guild_name = ctx.interaction.guild.name
+  channel_name = ctx.interaction.channel.name
+  bot_name = (await bot.application_info()).name
+
+  info = f"[{guild_name} - #{channel_name}] ({bot_name}) "
+  if "\n" in description:
+    info_length = len(info)
+    parts = description.split("\n")
+    print(f"{info}{parts[0]}")
+    for i in range(1, len(parts)):
+      print(info_length * " " + parts[i])
+  else:
+    print(f"{info}{description}")
+  print()
+
+  return await ctx.respond(
+    embed=discord.Embed(
+      color=config.EMBED_COLOR,
+      description=description
+    ),
+    ephemeral=ephemeral
+  )
 
 
 # Server Functions
@@ -79,7 +122,7 @@ def toggleTask(server_id: str, enabled: bool):
 
 # Validation Functions
 
-async def isAdminUser(ctx):
+async def isAdminUser(ctx: discord.ApplicationContext):
   valid = ctx.author.id in config.ADMINS
   if not valid:
     await ctx.respond(
@@ -92,7 +135,7 @@ async def isAdminUser(ctx):
   return valid
 
 
-async def isValidUser(ctx):
+async def isValidUser(ctx: discord.ApplicationContext):
   valid = ctx.author.id in config.ADMINS or \
     any(role.name in config.AUTHORIZED_ROLES for role in ctx.author.roles)
   if not valid:
@@ -106,7 +149,7 @@ async def isValidUser(ctx):
   return valid
 
 
-async def isValidServerId(ctx, position: int, limit: int):
+async def isValidServerId(ctx: discord.ApplicationContext, position: int, limit: int):
   valid = 0 <= position < limit
   if not valid:
     await ctx.respond(

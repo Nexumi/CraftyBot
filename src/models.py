@@ -1,5 +1,6 @@
 import config
 import utils
+import datetime
 import requests
 import discord
 from discord.ext import tasks, commands
@@ -8,16 +9,18 @@ from discord.ext import tasks, commands
 class StatusWatcher(commands.Cog):
   def __init__(
     self,
+    bot_name,
     message,
     server_name: str,
     server_id: str,
     status: str
   ):
+    self.bot_name = bot_name
     self.message = message
     self.server_name = server_name
     self.server_id = server_id
     self.status = status
-    self.extraP = 'p' if status == 'stop' else ''
+    self.extra_p = 'p' if status == 'stop' else ''
 
     self.running = utils.getServerStatus(server_id)['version']
     self.timeout = 180
@@ -28,12 +31,17 @@ class StatusWatcher(commands.Cog):
 
   async def stop(self):
     if self.seconds < self.timeout:
-      status = f'{self.server_name} has {self.status}{self.extraP}ed'
+      status = f'{self.server_name} has {self.status}{self.extra_p}ed'
       if self.status in ['start', 'restart']:
-        PlayerWatcher(self.message, self.server_name, self.server_id)
+        PlayerWatcher(self.bot_name, self.message, self.server_name, self.server_id)
     else:
       status = f'Something went wrong while trying to\
         {self.status} {self.server_name}'
+
+    now = datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")
+    print(f"[-] StatusWatcher Message @ {now}")
+    print(f"[{self.message.guild.name} - #{self.message.channel.name}] ({self.bot_name}) {status}")
+    print()
 
     await self.message.edit(
       embed=discord.Embed(
@@ -50,7 +58,7 @@ class StatusWatcher(commands.Cog):
       embed=discord.Embed(
         color=8864735,
         description=f'{self.server_name} is\
-          {self.status}{self.extraP}ing.{"." * ((self.seconds - 1) % 3)}'
+          {self.status}{self.extra_p}ing.{"." * ((self.seconds - 1) % 3)}'
       )
     )
 
@@ -74,11 +82,14 @@ class PlayerWatcher(commands.Cog):
 
   def __init__(
     self,
+    bot_name,
     message,
     server_name: str,
     server_id: str
   ):
     PlayerWatcher.watcher.add(server_id)
+    self.bot_name = bot_name
+    self.message = message
     self.channel = message.channel if message is not None else None
     self.server_name = server_name
     self.server_id = server_id
@@ -105,10 +116,16 @@ class PlayerWatcher(commands.Cog):
             utils.toggleTask(self.server_id, False)
 
         if self.channel is not None:
+          now = datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")
+          print(f"[-] PlayerWatcher Message @ {now}")
+          msg = f'{self.server_name} has been stopped due to inactivity'
+          print(f"[{self.message.guild.name} - #{self.message.channel.name}] ({self.bot_name}) {msg}")
+          print()
+
           await self.channel.send(
             embed=discord.Embed(
               color=8864735,
-              description=f'{self.server_name} has been stopped due to inactivity'
+              description=msg
             )
           )
 
