@@ -36,14 +36,7 @@ async def start(
   utils.log_request(ctx, locals())
   if await utils.is_valid_user(ctx, bot):
     servers = utils.get_server_list()
-    try:
-      server_pos = utils.get_server_names(server_list=servers).index(server)
-    except Exception as e:
-      print(e)
-      if server.isdigit():
-        server_pos = int(server) - 1
-      else:
-        server_pos = -1
+    server_pos = utils.get_server_id(server, servers)
     if await utils.is_valid_server_id(ctx, bot, server_pos, len(servers)):
       server_id = servers[server_pos]['server_id']
       server_name = servers[server_pos]['server_name']
@@ -119,12 +112,16 @@ async def stop(ctx: discord.ApplicationContext):
 @discord.guild_only()
 async def detail(
   ctx: discord.ApplicationContext,
-  server_number: discord.commands.Option(int, 'Get server number from /list')
+  server: discord.commands.Option(
+    str,
+    'Name of server to start/restart.',
+    autocomplete=utils.get_server_names
+  )
 ):
   utils.log_request(ctx, locals())
   if await utils.is_valid_user(ctx, bot):
     servers = utils.get_server_list()
-    server_pos = server_number - 1
+    server_pos = utils.get_server_id(server, servers)
     if await utils.is_valid_server_id(ctx, bot, server_pos, len(servers)):
       server = servers[server_pos]
       server_id = server['server_id']
@@ -173,13 +170,17 @@ async def deauth(ctx: discord.ApplicationContext):
 @bot.slash_command(description='(Admin Only) Toggle backup mode.', guild_ids=config.ADMIN_GUILDS)
 async def backup(
   ctx: discord.ApplicationContext,
-  server_number: discord.commands.Option(int, 'Get server number from /list'),
+  server: discord.commands.Option(
+    str,
+    'Name of server to start/restart.',
+    autocomplete=utils.get_server_names
+  ),
   enable: discord.commands.Option(bool, 'Enable/Disable backup scheduler')
 ):
   utils.log_request(ctx, locals())
   if await utils.is_admin_user(ctx, bot):
     servers = utils.get_server_list()
-    server_pos = server_number - 1
+    server_pos = utils.get_server_id(server, servers)
     if await utils.is_valid_server_id(ctx, bot, server_pos, len(servers)):
       server_id = servers[server_pos]['server_id']
       await utils.log_response(

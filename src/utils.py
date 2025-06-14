@@ -94,6 +94,15 @@ def get_server_names(server_list=None, ctx=None):
     results = filter(lambda n: search in n.casefold(), results)
   return list(results)
 
+def get_server_id(server: str, servers=None):
+  try:
+    return get_server_names(server_list=servers).index(server)
+  except:
+    if server.isdigit():
+      return int(server) - 1
+    else:
+      return -1
+
 
 def get_server_status(server_id: str):
   has_valid_token()
