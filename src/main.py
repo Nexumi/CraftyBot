@@ -222,7 +222,12 @@ async def watcher(ctx: discord.ApplicationContext):
             bot,
             f'PlayerWatcher started watching {server["server_name"]}'
           )
-          models.PlayerWatcher(message, server["server_name"], server['server_id'])
+          models.PlayerWatcher(
+            (await bot.application_info()).name,
+            message,
+            server["server_name"],
+            server['server_id']
+          )
 
         break
     else:
