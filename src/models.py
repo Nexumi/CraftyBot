@@ -57,8 +57,7 @@ class StatusWatcher(commands.Cog):
     await self.message.edit(
       embed=discord.Embed(
         color=8864735,
-        description=f'{self.server_name} is\
-          {self.status}{self.extra_p}ing.{"." * ((self.seconds - 1) % 3)}'
+        description=f'{self.server_name} is {self.status}{self.extra_p}ing.{"." * ((self.seconds - 1) % 3)}'
       )
     )
 
