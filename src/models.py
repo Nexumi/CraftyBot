@@ -23,7 +23,7 @@ class StatusWatcher(commands.Cog):
     self.extra_p = 'p' if status == 'stop' else ''
 
     self.running = utils.get_server_status(server_id)['version']
-    self.timeout = 180
+    self.timeout = config.LOAD_TIMEOUT
     self.seconds = 0
     self.delay = 10 if status == 'restart' else 0
     self.check.start()

@@ -33,6 +33,9 @@ SERVER_TO_TASK = {
   'id': ['sch_id1', 'sch_id2'],
 }
 
-# How long until the server automatically shuts down when no players are online
+# How long to wait for the server to load before giving up and displaying an error message in seconds
+LOAD_TIMEOUT = 180
+
+# How long until the server automatically shuts down when no players are online in minutes
 # 0 = OFF
 IDLE_TIMEOUT = 0
