@@ -35,8 +35,7 @@ class StatusWatcher(commands.Cog):
       if self.status in ['start', 'restart']:
         PlayerWatcher(self.bot_name, self.message, self.server_name, self.server_id)
     else:
-      status = f'Something went wrong while trying to\
-        {self.status} {self.server_name}'
+      status = f'Something went wrong while trying to {self.status} {self.server_name}'
 
     now = datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")
     print(f"[-] StatusWatcher Message @ {now}")
