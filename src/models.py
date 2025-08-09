@@ -44,7 +44,7 @@ class StatusWatcher(commands.Cog):
 
     await self.message.edit(
       embed=discord.Embed(
-        color=8864735,
+        color=config.EMBED_COLOR,
         description=status
       )
     )
@@ -122,7 +122,7 @@ class PlayerWatcher(commands.Cog):
 
           await self.channel.send(
             embed=discord.Embed(
-              color=8864735,
+              color=config.EMBED_COLOR,
               description=msg
             )
           )
