@@ -85,7 +85,6 @@ class PlayerWatcher(commands.Cog):
     server_name: str,
     server_id: str
   ):
-    PlayerWatcher.watcher.add(server_id)
     self.bot_name = bot_name
     self.message = message
     self.channel = message.channel if message is not None else None
@@ -96,6 +95,7 @@ class PlayerWatcher(commands.Cog):
     self.minutes = 0
 
     if self.timeout > 0 and server_id not in PlayerWatcher.watcher:
+      PlayerWatcher.watcher.add(server_id)
       self.check.start()
 
 
