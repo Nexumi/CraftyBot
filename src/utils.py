@@ -151,15 +151,15 @@ def toggle_task(server_id: str, enabled: bool):
 # Validation Functions
 
 async def is_admin_user(ctx: discord.ApplicationContext, bot):
-  valid = ctx.author.id in config.ADMINS
+  valid = ctx.user.id in config.ADMINS
   if not valid:
     await log_response(ctx, bot, 'UNAUTHORIZED USER', ephemeral=True)
   return valid
 
 
 async def is_valid_user(ctx: discord.ApplicationContext, bot):
-  valid = ctx.author.id in config.ADMINS or \
-    any(role.name in config.AUTHORIZED_ROLES for role in ctx.author.roles)
+  valid = ctx.user.id in config.ADMINS or \
+    any(role.name in config.AUTHORIZED_ROLES for role in ctx.user.roles)
   if not valid:
     await log_response(ctx,
       bot,
