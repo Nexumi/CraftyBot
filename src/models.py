@@ -167,7 +167,7 @@ class ConfirmationWatcher(commands.Cog):
     else:
       await self.message.edit(
         embed=discord.Embed(
-          color=8864735,
+          color=config.EMBED_COLOR,
           description=self.description
         ),
         view=None
