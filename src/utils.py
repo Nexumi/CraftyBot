@@ -21,9 +21,9 @@ def clean_description(text: str):
 
 def log_request(ctx, parameters: dict):
   now = datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")
-  guild_name = ctx.interaction.guild.name
-  channel_name = ctx.interaction.channel.name
-  user_name = ctx.interaction.user.name
+  guild_name = ctx.guild.name
+  channel_name = ctx.channel.name
+  user_name = ctx.user.name
 
   command_name = inspect.stack()[1].function
   command_parameters = " ".join(list(map(lambda l: f"{l[0]}={l[1]}", dict(list(parameters.items())[1:]).items())))
@@ -34,8 +34,8 @@ def log_request(ctx, parameters: dict):
 
 
 async def log_response(ctx, bot, description, view=None, ephemeral=False):
-  guild_name = ctx.interaction.guild.name
-  channel_name = ctx.interaction.channel.name
+  guild_name = ctx.guild.name
+  channel_name = ctx.channel.name
   bot_name = (await bot.application_info()).name
 
   info = f"[{guild_name} - #{channel_name}] ({bot_name}) "
