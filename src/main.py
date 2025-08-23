@@ -1,6 +1,7 @@
 import config
 import utils
 import models
+import views
 import discord
 
 
@@ -52,26 +53,37 @@ async def start(
           return
 
       running = utils.get_server_status(server_id)['running']
-      if utils.send_server_action(server_id, 'restart'):
-        if server_id in config.SERVER_TO_TASK and not running:
-          utils.toggle_task(server_id, True)
-        status = f'{server_name} is starting'
-      else:
-        status = f'Something went wrong while trying to start {server_name}'
+
+      async def callback(message=None):
+        if utils.send_server_action(server_id, 'restart'):
+          if server_id in config.SERVER_TO_TASK and not running:
+            utils.toggle_task(server_id, True)
+          status = f'{server_name} is starting'
+        else:
+          status = f'Something went wrong while trying to start {server_name}'
+
+        if not running:
+          message = await utils.log_response(ctx, bot, status)
+
+        if 'wrong' not in status:
+          models.StatusWatcher(
+            (await bot.application_info()).name,
+            message,
+            server_name,
+            server_id,
+            "restart" if running else "start"
+          )
 
       if running:
-        status = status.replace('start', 'restart')
-
-      message = await utils.log_response(ctx, bot, status)
-
-      if 'wrong' not in status:
-        models.StatusWatcher(
-          (await bot.application_info()).name,
-          message,
-          server_name,
-          server_id,
-          "restart" if running else "start"
+        views.RestartConfirmation.callback = callback
+        message = await utils.log_response(
+          ctx,
+          bot,
+          f"{server_name} is already running",
+          view=views.RestartConfirmation()
         )
+      else:
+        await callback()
 
 
 @bot.slash_command(description='Stop server.')
