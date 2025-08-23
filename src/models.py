@@ -134,3 +134,36 @@ class PlayerWatcher(commands.Cog):
     else:
       PlayerWatcher.watcher.remove(self.server_id)
       self.check.cancel()
+
+
+class ConfirmationWatcher(commands.Cog):
+  def __init__(
+    self,
+    bot_name,
+    message,
+    description,
+    confirmation
+  ):
+    self.bot_name = bot_name
+    self.message = message
+    self.description = description
+    self.confirmation = confirmation
+    self.first = True
+
+    self.check.start()
+
+
+  @tasks.loop(seconds=30)
+  async def check(self):
+    if self.first:
+      self.first = False
+    else:
+      if not self.confirmation.confirmed:
+        await self.message.edit(
+          embed=discord.Embed(
+            color=8864735,
+            description=self.description
+          ),
+          view=None
+        )
+      self.check.cancel()
