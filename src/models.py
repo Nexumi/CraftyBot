@@ -101,6 +101,29 @@ class PlayerWatcher(commands.Cog):
       self.check.start()
 
 
+  async def stop(self):
+    if utils.send_server_action(self.server_id, 'stop'):
+      if self.server_id in config.SERVER_TO_TASK:
+        utils.toggle_task(self.server_id, False)
+
+    if self.channel is not None:
+      now = datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")
+      print(f"[-] PlayerWatcher Message @ {now}")
+      msg = f'{self.server_name} has been stopped due to inactivity'
+      print(f"[{self.message.guild.name} - #{self.message.channel.name}] ({self.bot_name}) {msg}")
+      print()
+
+      await self.channel.send(
+        embed=discord.Embed(
+          color=config.EMBED_COLOR,
+          description=msg
+        )
+      )
+
+    PlayerWatcher.watcher.remove(self.server_id)
+    self.check.cancel()
+
+
   @tasks.loop(minutes=1)
   async def check(self):
     server_status = utils.get_server_status(self.server_id)
@@ -111,26 +134,7 @@ class PlayerWatcher(commands.Cog):
         else:
           self.minutes = 0
       else:
-        if utils.send_server_action(self.server_id, 'stop'):
-          if self.server_id in config.SERVER_TO_TASK:
-            utils.toggle_task(self.server_id, False)
-
-        if self.channel is not None:
-          now = datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")
-          print(f"[-] PlayerWatcher Message @ {now}")
-          msg = f'{self.server_name} has been stopped due to inactivity'
-          print(f"[{self.message.guild.name} - #{self.message.channel.name}] ({self.bot_name}) {msg}")
-          print()
-
-          await self.channel.send(
-            embed=discord.Embed(
-              color=config.EMBED_COLOR,
-              description=msg
-            )
-          )
-
-        PlayerWatcher.watcher.remove(self.server_id)
-        self.check.cancel()
+        await self.stop()
     else:
       PlayerWatcher.watcher.remove(self.server_id)
       self.check.cancel()
