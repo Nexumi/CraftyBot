@@ -77,8 +77,9 @@ async def start(
       if running:
         description = f"{server_name} is already running"
         view = views.RestartConfirmation()
-        view.callback = callback
         view.confirmed = False
+        view.bot = bot
+        view.callback = callback
         message = await utils.log_response(
           ctx,
           bot,
