@@ -42,7 +42,7 @@ async def start(
       server_name = servers[server_pos]['server_name']
 
       for server in servers:
-        if utils.get_server_status(server['server_id'])['running'] and server_name != server['server_name']:
+        if utils.get_server_status(server['server_id'])['running'] and server_id != server['server_id']:
           await utils.log_response(
             ctx,
             bot,
