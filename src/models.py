@@ -10,7 +10,7 @@ from discord.ext import tasks, commands
 class StatusWatcher(commands.Cog):
   def __init__(
     self,
-    bot_name,
+    bot_name: str,
     message,
     server_name: str,
     server_id: str,
@@ -82,7 +82,7 @@ class PlayerWatcher(commands.Cog):
 
   def __init__(
     self,
-    bot_name,
+    bot_name: str,
     message,
     server_name: str,
     server_id: str
@@ -143,9 +143,9 @@ class PlayerWatcher(commands.Cog):
 class ConfirmationWatcher(commands.Cog):
   def __init__(
     self,
-    bot_name,
+    bot_name: str,
     message,
-    description,
+    description: str,
     confirmation
   ):
     self.bot_name = bot_name
