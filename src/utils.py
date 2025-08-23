@@ -33,7 +33,7 @@ def log_request(ctx, parameters: dict):
   print(f"[{guild_name} - #{channel_name}] ({user_name}) {command}")
 
 
-async def log_response(ctx, bot, description, ephemeral=False):
+async def log_response(ctx, bot, description, view=None, ephemeral=False):
   guild_name = ctx.interaction.guild.name
   channel_name = ctx.interaction.channel.name
   bot_name = (await bot.application_info()).name
@@ -54,6 +54,7 @@ async def log_response(ctx, bot, description, ephemeral=False):
       color=config.EMBED_COLOR,
       description=description
     ),
+    view=view,
     ephemeral=ephemeral
   )
 
