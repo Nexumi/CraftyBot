@@ -75,12 +75,20 @@ async def start(
           )
 
       if running:
+        views.RestartConfirmation.confirmed = False
         views.RestartConfirmation.callback = callback
+        description = f"{server_name} is already running"
         message = await utils.log_response(
           ctx,
           bot,
-          f"{server_name} is already running",
+          description,
           view=views.RestartConfirmation()
+        )
+        models.ConfirmationWatcher(
+          (await bot.application_info()).name,
+          message,
+          description,
+          views.RestartConfirmation
         )
       else:
         await callback()
