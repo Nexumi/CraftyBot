@@ -1,5 +1,6 @@
 import config
 import utils
+import views
 import datetime
 import requests
 import discord
@@ -57,7 +58,8 @@ class StatusWatcher(commands.Cog):
       embed=discord.Embed(
         color=8864735,
         description=f'{self.server_name} is {self.status}{self.extra_p}ing.{"." * ((self.seconds - 1) % 3)}'
-      )
+      ),
+      view=None
     )
 
 
