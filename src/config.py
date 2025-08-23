@@ -39,3 +39,7 @@ LOAD_TIMEOUT = 180
 # How long until the server automatically shuts down when no players are online in minutes
 # 0 = OFF
 IDLE_TIMEOUT = 0
+
+# How long to wait for the user to click the restart button before hidding it
+# 0 = Show forever
+CONFIRMATION_TIMEOUT = 30

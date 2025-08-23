@@ -148,22 +148,24 @@ class ConfirmationWatcher(commands.Cog):
     self.message = message
     self.description = description
     self.confirmation = confirmation
-    self.first = True
+
+    self.timeout = config.CONFIRMATION_TIMEOUT
+    self.seconds = 0
 
     self.check.start()
 
 
-  @tasks.loop(seconds=30)
+  @tasks.loop(seconds=1)
   async def check(self):
-    if self.first:
-      self.first = False
+    if self.seconds < self.timeout:
+      if self.confirmation.confirmed:
+        self.check.cancel()
     else:
-      if not self.confirmation.confirmed:
-        await self.message.edit(
-          embed=discord.Embed(
-            color=8864735,
-            description=self.description
-          ),
-          view=None
-        )
+      await self.message.edit(
+        embed=discord.Embed(
+          color=8864735,
+          description=self.description
+        ),
+        view=None
+      )
       self.check.cancel()
