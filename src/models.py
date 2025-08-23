@@ -156,7 +156,8 @@ class ConfirmationWatcher(commands.Cog):
     self.timeout = config.CONFIRMATION_TIMEOUT
     self.seconds = 0
 
-    self.check.start()
+    if self.timeout > 0:
+      self.check.start()
 
 
   @tasks.loop(seconds=1)
@@ -164,6 +165,7 @@ class ConfirmationWatcher(commands.Cog):
     if self.seconds < self.timeout:
       if self.confirmation.confirmed:
         self.check.cancel()
+      self.seconds += 1
     else:
       await self.message.edit(
         embed=discord.Embed(

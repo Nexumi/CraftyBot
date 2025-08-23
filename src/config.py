@@ -40,6 +40,6 @@ LOAD_TIMEOUT = 180
 # 0 = OFF
 IDLE_TIMEOUT = 0
 
-# How long to wait for the user to click the restart button before hidding it
-# 0 = Show forever
+# How long to wait for the user to click the restart button before hiding it in seconds
+# 0 = SHOW FOREVER
 CONFIRMATION_TIMEOUT = 30
