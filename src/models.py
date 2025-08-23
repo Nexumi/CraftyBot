@@ -56,7 +56,7 @@ class StatusWatcher(commands.Cog):
   async def dotX3(self):
     await self.message.edit(
       embed=discord.Embed(
-        color=8864735,
+        color=config.EMBED_COLOR,
         description=f'{self.server_name} is {self.status}{self.extra_p}ing.{"." * ((self.seconds - 1) % 3)}'
       ),
       view=None
