@@ -35,12 +35,12 @@ pip install -U py-cord requests
 ```
 3. Run the following command to start the bot:
 ```
-python main.py
+python -u main.py
 ```
 
 ### Running As A Service
 There is an excellent [guide](https://jmusicbot.com/running-as-a-service/) for running JMusicBot as a service.
 The only thing that is really different aside from the the name is the execution command:
 ```
-python main.py
+python -u main.py
 ```
