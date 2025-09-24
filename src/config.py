@@ -33,6 +33,10 @@ SERVER_TO_TASK = {
   'id': ['sch_id1', 'sch_id2'],
 }
 
+# IP used with the detail command
+# Defaults to using your public IP
+IP = None
+
 # How long to wait for the server to load before giving up and displaying an error message in seconds
 LOAD_TIMEOUT = 180
 

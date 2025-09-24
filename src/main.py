@@ -153,7 +153,7 @@ async def detail(
       running = status['running']
       desc = utils.clean_description(status['desc']) if status['desc'] != 'False' else 'Loading...'
       version = status['version'] if status['version'] != 'False' else 'Loading...'
-      ip = 'crafty.jpkit.us'
+      ip = config.IP
       port = status['server_id']['server_port']
       online = f'{status["online"]}/{status["max"]}'
       players = eval(status['players'])
