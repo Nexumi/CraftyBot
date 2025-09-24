@@ -4,6 +4,7 @@ import discord
 import inspect
 import requests
 import re
+import socket
 
 
 session = requests.Session()
@@ -15,6 +16,19 @@ requests.packages.urllib3.disable_warnings()
 
 def clean_description(text: str):
   return re.sub(r'§.', '', text).strip().replace('\n', '')
+
+
+# Useful Functions
+
+def get_current_ip():
+  response = requests.get('https://api.ipify.org')
+  if response.status_code == 200:
+    return response.text
+  else:
+    try:
+      return socket.gethostbyname(socket.gethostname())
+    except:
+      return '127.0.0.1'
 
 
 # Logging Functions

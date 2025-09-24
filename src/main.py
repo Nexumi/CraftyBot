@@ -153,7 +153,7 @@ async def detail(
       running = status['running']
       desc = utils.clean_description(status['desc']) if status['desc'] != 'False' else 'Loading...'
       version = status['version'] if status['version'] != 'False' else 'Loading...'
-      ip = config.IP
+      ip = config.IP if config.IP else utils.get_current_ip()
       port = status['server_id']['server_port']
       online = f'{status["online"]}/{status["max"]}'
       players = eval(status['players'])
