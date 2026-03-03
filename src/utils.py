@@ -39,8 +39,9 @@ def log_request(ctx, parameters: dict):
   channel_name = ctx.channel.name
   user_name = ctx.user.name
 
+  parameters.pop('ctx', None)
   command_name = inspect.stack()[1].function
-  command_parameters = " ".join(list(map(lambda l: f"{l[0]}={l[1]}", dict(list(parameters.items())[1:]).items())))
+  command_parameters = " ".join(list(map(lambda l: f"{l[0]}={l[1]}", dict(list(parameters.items())).items())))
   command = f"/{command_name} {command_parameters}"
 
   print(f"[-] Executing Command @ {now}")
