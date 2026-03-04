@@ -178,7 +178,7 @@ async def is_valid_user(ctx: discord.ApplicationContext, bot):
   if not valid:
     await log_response(ctx,
       bot,
-      f'UNAUTHORIZED USER\nREQUIRED ROLE: {", ".join(config.AUTHORIZED_ROLES)}',
+      f'UNAUTHORIZED USER\nREQUIRED ROLE:\n- {"\n- ".join(config.AUTHORIZED_ROLES)}',
       ephemeral=True
     )
   return valid
