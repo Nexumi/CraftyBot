@@ -220,9 +220,10 @@ async def watcher(ctx: discord.ApplicationContext):
       await utils.log_response(
         ctx,
         bot,
-        f'PlayerWatcher failed to start due to invalid IDLE_TIMEOUT config',
+        f'PlayerWatcher failed to start due to invalid IDLE_TIMEOUT config for watching',
         ephemeral=True
       )
+      return
 
     servers = utils.get_server_list()
 
