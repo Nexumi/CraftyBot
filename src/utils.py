@@ -204,8 +204,8 @@ def get_token():
   }
 
   json_data = {
-    'username': 'crafty_bot',
-    'password': 'command_and_control'
+    'username': config.CRAFTY_USERNAME,
+    'password': config.CRAFTY_PASSWORD
   }
 
   response = session.post(
