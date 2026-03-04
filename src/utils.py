@@ -173,7 +173,7 @@ async def is_admin_user(ctx: discord.ApplicationContext, bot):
 
 
 async def is_valid_user(ctx: discord.ApplicationContext, bot):
-  valid = ctx.user.id in config.ADMINS or \
+  valid = not config.AUTHORIZED_ROLES or ctx.user.id in config.ADMINS or \
     any(role.name in config.AUTHORIZED_ROLES for role in ctx.user.roles)
   if not valid:
     await log_response(ctx,
