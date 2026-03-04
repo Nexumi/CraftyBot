@@ -8,7 +8,7 @@ BASE_URL = 'https://<CRAFTY_CONTROLLER_URL>/api/v2'
 # Crafty Controller account for bot to run as
 CRAFTY_USERNAME = 'CraftyBot'
 
-# Crafty Controll account password for bot to run as
+# Crafty Controller account password for bot to run as
 CRAFTY_PASSWORD = 'CraftyBotPassword'
 
 
