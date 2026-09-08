@@ -92,7 +92,7 @@ class PlayerWatcher(commands.Cog):
     self.channel = message.channel if message is not None else None
     self.server_name = server_name
     self.server_id = server_id
-    
+
     self.timeout = config.IDLE_TIMEOUT
     self.minutes = 0
 
