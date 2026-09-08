@@ -23,7 +23,7 @@ class StatusWatcher(commands.Cog):
     self.status = status
     self.extra_p = 'p' if status == 'stop' else ''
 
-    self.running = utils.get_server_status(server_id)['version']
+    self.running = utils.get_server_status(server_id).get('version')
     self.timeout = config.LOAD_TIMEOUT
     self.seconds = 0
     self.delay = 10 if status == 'restart' else 0
@@ -70,7 +70,7 @@ class StatusWatcher(commands.Cog):
       or self.status == "stop" and self.running != 'False')\
       and self.seconds < self.timeout):
         self.seconds += 1
-        self.running = utils.get_server_status(self.server_id)['version']
+        self.running = utils.get_server_status(self.server_id).get('version')
         await self.dotX3()
     else:
       await self.stop()

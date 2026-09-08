@@ -43,7 +43,7 @@ async def start(
       server_name = servers[server_pos]['server_name']
 
       for server in servers:
-        if utils.get_server_status(server['server_id'])['running'] and server_id != server['server_id']:
+        if utils.get_server_status(server['server_id']).get('running') and server_id != server['server_id']:
           await utils.log_response(
             ctx,
             bot,
@@ -52,7 +52,7 @@ async def start(
           )
           return
 
-      running = utils.get_server_status(server_id)['running']
+      running = utils.get_server_status(server_id).get('running')
 
       async def callback(message=None):
         if utils.send_server_action(server_id, 'restart'):
@@ -106,7 +106,7 @@ async def stop(ctx: discord.ApplicationContext):
       server_id = server['server_id']
       server_name = server['server_name']
 
-      if utils.get_server_status(server_id)['running']:
+      if utils.get_server_status(server_id).get('running'):
         if utils.send_server_action(server_id, 'stop'):
           if server_id in config.SERVER_TO_TASK:
             utils.toggle_task(server_id, False)
