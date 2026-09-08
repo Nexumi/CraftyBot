@@ -85,12 +85,16 @@ def get_headers():
 def get_server_list():
   has_valid_token()
 
-  response = session.get(
-    f'{config.BASE_URL}/servers',
-    headers=get_headers()
-  )
+  try:
+    response = session.get(
+      f'{config.BASE_URL}/servers',
+      headers=get_headers(),
+      timeout=10
+    )
 
-  return response.json()['data']
+    return response.json()['data']
+  except:
+    return
 
 
 def get_server_names(server_list=None, ctx=None):
@@ -123,23 +127,33 @@ def get_server_id(server: str, servers=None):
 def get_server_status(server_id: str):
   has_valid_token()
 
-  response = session.get(
-    f'{config.BASE_URL}/servers/{server_id}/stats',
-    headers=get_headers()
-  )
+  try:
+    response = session.get(
+      f'{config.BASE_URL}/servers/{server_id}/stats',
+      headers=get_headers(),
+      timeout=10
+    )
+    response.raise_for_status()
 
-  return response.json()['data']
+    return response.json()['data']
+  except:
+    return
 
 
 def send_server_action(server_id: str, action: str):
   has_valid_token()
 
-  response = session.post(
-    f'{config.BASE_URL}/servers/{server_id}/action/{action}_server',
-    headers=get_headers()
-  )
+  try:
+    response = session.post(
+      f'{config.BASE_URL}/servers/{server_id}/action/{action}_server',
+      headers=get_headers(),
+      timeout=10
+    )
+    response.raise_for_status()
 
-  return response.json()['status'] == 'ok'
+    return response.json()['status'] == 'ok'
+  except:
+    return
 
 
 def toggle_task(server_id: str, enabled: bool):
@@ -154,11 +168,15 @@ def toggle_task(server_id: str, enabled: bool):
     return 'Task not found'
 
   for tid in task_id:
-    response = session.patch(
-      f'{config.BASE_URL}/servers/{server_id}/tasks/{tid}',
-      headers=get_headers(),
-      json=body
-    )
+    try:
+      response = session.patch(
+        f'{config.BASE_URL}/servers/{server_id}/tasks/{tid}',
+        headers=get_headers(),
+        json=body,
+        timeout=10
+      )
+    except:
+      pass
 
   return enabled
 
@@ -208,40 +226,52 @@ def get_token():
     'password': config.CRAFTY_PASSWORD
   }
 
-  response = session.post(
-    f'{config.BASE_URL}/auth/login',
-    headers=get_headers(),
-    json=json_data
-  )
+  try:
+    response = session.post(
+      f'{config.BASE_URL}/auth/login',
+      headers=get_headers(),
+      json=json_data,
+      timeout=10
+    )
 
-  return response.json()['data']['token']
+    return response.json()['data']['token']
+  except:
+    return
 
 
 def clear_all_tokens():
   has_valid_token()
 
-  response = session.post(
-    f'{config.BASE_URL}/auth/invalidate_tokens',
-    headers=get_headers()
-  )
+  try:
+    response = session.post(
+      f'{config.BASE_URL}/auth/invalidate_tokens',
+      headers=get_headers(),
+      timeout=10
+    )
 
-  return response.json()['status'] == 'ok'
+    return response.json()['status'] == 'ok'
+  except:
+    return
 
 
 def has_valid_token():
   global TOKEN
 
-  response = session.get(
-      f'{config.BASE_URL}/servers',
-      headers=get_headers()
-  )
+  try:
+    response = session.get(
+        f'{config.BASE_URL}/servers',
+        headers=get_headers(),
+        timeout=10
+    )
 
-  json = response.json()
-  if json['status'] == 'error' and json['error'] == 'ACCESS_DENIED':
-    TOKEN = get_token()
-    return 'New Token Generated'
+    json = response.json()
+    if json['status'] == 'error' and json['error'] == 'ACCESS_DENIED':
+      TOKEN = get_token()
+      return 'New Token Generated'
 
-  return 'Token Valid'
+    return 'Token Valid'
+  except:
+    return
 
 
 TOKEN = None
