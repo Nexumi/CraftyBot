@@ -96,7 +96,8 @@ class PlayerWatcher(commands.Cog):
     self.timeout = config.IDLE_TIMEOUT
     self.minutes = 0
 
-    if self.timeout > 0 and server_id not in PlayerWatcher.watcher:
+    server_status = utils.get_server_status(self.server_id)
+    if self.timeout > 0 and server_id not in PlayerWatcher.watcher and server_status['max'] != 0:
       PlayerWatcher.watcher.add(server_id)
       self.check.start()
 
