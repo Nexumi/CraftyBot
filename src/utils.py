@@ -92,7 +92,7 @@ def get_server_list():
       timeout=10
     )
 
-    return response.json()['data']
+    return response.json()['data'][::-1]
   except:
     return
 
