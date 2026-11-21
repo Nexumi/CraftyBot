@@ -131,7 +131,7 @@ class PlayerWatcher(commands.Cog):
     if server_status['running']:
       if self.minutes < self.timeout:
         if server_status['max'] == 0:
-          await self.check.cancel()
+          self.check.cancel()
         if server_status['online'] == 0:
           self.minutes += 1
         else:
